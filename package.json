@@ -36,5 +36,8 @@
     "numeral": "^2.0.6",
     "ora": "^2.1.0",
     "promise-retry": "^1.1.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1"
   }
 }
