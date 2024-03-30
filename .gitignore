@@ -1,0 +1,8 @@
+node_modules
+coverage
+dist
+.env
+public
+cloudfunctions.js
+n3uraln3twork.pine
+app.dockerfile

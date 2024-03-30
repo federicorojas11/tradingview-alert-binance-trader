@@ -1,6 +1,10 @@
 "use strict";
 require("dotenv").config();
 
+
+// EMAIL implementation deprecated. Use https://github.com/googleapis/google-api-nodejs-client/blob/main/samples/gmail/watch.js instead.
+ 
+
 /*=============================================== USER CONFIGURATION ===============================================*/
 
 const userConfig = {
@@ -9,10 +13,10 @@ const userConfig = {
     apiSecret: "xxx",
   },
   mail: {
-    username: process.env.username,
+    username: process.env.useremail,
     password: process.env.password,
-    host: "imap.gmail.com",
-    port: 993,
+    host: process.env.host,
+    port: process.env.port,
     mailbox: "INBOX",
   },
 };
@@ -54,6 +58,7 @@ const binance_client = binance({
   apiSecret: userConfig.binance.apiSecret,
   useServerTime: true,
 });
+
 log(logSymbols.info, "Connected to " + chalk.magenta("Binance"));
 
 let runningMailHandler = false;
@@ -103,6 +108,9 @@ mailListener.on("error", (err) => {
 mailListener.on("mail", (mail) => {
   runOneAtATime(mail);
 });
+
+
+
 
 /**
  * Handle new incoming emails
@@ -169,7 +177,7 @@ function Binance_trade(email_text) {
     )
     .toUpperCase();
   log(chalk.grey("PAIR: "), pair);
-
+  
   // TD BUY ALERT TEXT FORMAT:
   // #BCE_ACTION_START#BUY#BCE_ACTION_END#
   // #BCE_PAIR_START#BTCUSDT#BCE_PAIR_END#
@@ -185,6 +193,7 @@ function Binance_trade(email_text) {
 
     if (trading[pair]) {
       // EXISTING TRADING PAIR //
+      log(chalk.green(pair + "  => Existing trading pair - buy at market price."));
       buy_at_market_price(pair);
     } else {
       // NEW TRADING PAIR
@@ -192,6 +201,8 @@ function Binance_trade(email_text) {
       binance_client.exchangeInfo().then((results) => {
         // CHECK IF PAIR IS UNKNOWN:
         if (_.filter(results.symbols, { symbol: pair }).length > 0) {
+          log(chalk.green(pair + "  => New trading pair - buy at market price."));
+
           // PAIR EXISTS
           stepSize[pair] = _.filter(results.symbols, {
             symbol: pair,
