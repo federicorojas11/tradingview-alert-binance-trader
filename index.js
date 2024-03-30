@@ -1,16 +1,12 @@
 "use strict";
-require("dotenv").config();
-
-
-// EMAIL implementation deprecated. Use https://github.com/googleapis/google-api-nodejs-client/blob/main/samples/gmail/watch.js instead.
- 
+require("dotenv").config(); 
 
 /*=============================================== USER CONFIGURATION ===============================================*/
 
 const userConfig = {
   binance: {
-    apiKey: "xxx",
-    apiSecret: "xxx",
+    apiKey: process.env.bapikey,
+    apiSecret: process.env.bsecretkey,
   },
   mail: {
     username: process.env.useremail,
@@ -34,7 +30,8 @@ const adminConfig = {
     maxTimeout: 6000,
   },
   tradingview: {
-    mail: "noreply@tradingview.com",
+    // mail: "noreply@tradingview.com",
+    mail: process.env.useremail,
   },
 };
 
@@ -53,11 +50,22 @@ const chalk = require("chalk");
 log(logSymbols.info, chalk.yellow("Starting connection"));
 
 // Binance API initialization //
-const binance_client = binance({
+const binance_client = new binance({
   apiKey: userConfig.binance.apiKey,
   apiSecret: userConfig.binance.apiSecret,
-  useServerTime: true,
+  useServerTime: false,
 });
+
+// test binance api is working //
+async function asyncCall() {
+  console.log('calling');
+  // const result = await binance_client.accountInfo();
+  balance = await binance_client.futuresAccountBalance();
+  // let usdtbalance = balance.find(e => e.asset ==='USDT')
+  console.log(balance)
+}
+
+asyncCall();
 
 log(logSymbols.info, "Connected to " + chalk.magenta("Binance"));
 
